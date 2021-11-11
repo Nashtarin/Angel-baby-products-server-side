@@ -12,7 +12,34 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
     try{
         await client.connect();
-    console.log('Database Connected Successfully')}
+    console.log('Database Connected Successfully')
+    const database=client.db('angelBaby');
+    const productCollection=database.collection('products');
+    const userCollection= database.collection('users')
+    // Get Api
+    app.get('/products', async (req,res)=>{
+        const cursor=productCollection.find({});
+        const products=await cursor.toArray();
+        res.send(products)
+    })
+     app.get('/products/:productId', async(req,res)=>{
+        const id=req.params.productId;
+        const query={_id:ObjectId(id)};
+        const product=await productCollection.findOne(query);
+        res.json(product)
+        
+
+    })
+    //  post API
+    app.post('/users', async (req, res) => {
+        const user = req.body;
+           const result = await userCollection.insertOne(user);
+           res.json(result);})
+
+
+
+
+}
         finally{
 
         }
@@ -22,7 +49,7 @@ async function run(){
     }
 run().catch(console.dir)
  app.get('/',(req,res)=>{
-     res.send('Running Tourism wonderfully')
+     res.send('Running Angel wonderfully')
  });
  app.listen(port,()=>{
      console.log('Running volunteer network on port',port)

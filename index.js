@@ -33,6 +33,16 @@ async function run() {
         //     const users=await cursor.toArray();
         //     res.send(users)
         // })
+        app.get('/users/:email', async(req,res)=>{
+            const email=req.params.email;
+            const query={email:email};
+            const user=await userCollection.findOne(query);
+            let isAdmin=false;
+            if(user?.role==='admin'){
+                isAdmin=true
+            }
+            res.json({admin:isAdmin})
+        })
         app.get('/users', async (req, res) => {
             let query = {}
             const email = req.query.email;
@@ -47,6 +57,7 @@ async function run() {
             res.send(users)
 
         })
+       
         app.get('/products/:productId', async (req, res) => {
             const id = req.params.productId;
             const query = { _id: ObjectId(id) };
@@ -87,9 +98,6 @@ async function run() {
         })
         app.put('/users/:id', async (req, res) => {
             const id = req.params.id;
-           
-           
-            
                 const updateUser = req.body;
                 const filter = { _id: ObjectId(id) };
                 const options = { upsert: true };
